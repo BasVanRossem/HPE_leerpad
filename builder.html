@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Oefeningen-bouwer</title>
+<style>
+:root {
+  --blue: #2f6fed;
+  --blue-dark: #1c3f8f;
+  --blue-pale: #eaf1ff;
+  --green: #2f9e58;
+  --green-dark: #1f7a41;
+  --green-pale: #eefbf2;
+  --ink: #1e2430;
+  --muted: #667085;
+  --line: #e3e7ee;
+  --bg: #f6f7fb;
+  --card: #ffffff;
+  --radius: 12px;
+  --shadow: 0 2px 10px rgba(20, 30, 60, 0.06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: "Segoe UI", Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+#layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+  width: 340px;
+}
+
+/* ---------- Opgave ---------- */
+#opgave {
+  width: 100%;
+  max-width: 340px;
+  min-height: 160px;
+  max-height: 320px;
+  background: linear-gradient(160deg, var(--blue-pale), #ffffff);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: auto;
+  padding: 18px 20px;
+}
+#opgave b { color: var(--blue-dark); }
+
+#opgaveImageWrap {
+  width: 100%;
+  max-width: 340px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px;
+}
+
+.figure-nav { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 6px; font-size: 13px; color: var(--muted); }
+
+/* ---------- Quiz kolom ---------- */
+#quiz {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Accordions (hoofdvragen & oriëntatie) ---------- */
+.accordion {
+  cursor: pointer;
+  padding: 15px 18px;
+  width: 100%;
+  text-align: left;
+  border: none;
+  outline: none;
+  font-size: 15.5px;
+  font-weight: 600;
+  color: white;
+  background: var(--blue-dark);
+  border-radius: var(--radius);
+  transition: filter 0.15s, background 0.2s;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  box-shadow: var(--shadow);
+}
+.accordion:hover { filter: brightness(1.08); }
+.accordion.active { background: var(--blue); }
+.accordion-label { flex: 1; min-width: 0; }
+.accordion-arrow { flex-shrink: 0; margin-left: 12px; font-weight: bold; }
+
+.panel {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0 4px;
+  border: none;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+.panel.open {
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 6px 4px 18px;
+}
+
+/* ---------- Blocks ---------- */
+.block { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow); margin-bottom: 12px; }
+
+/* ---------- Hints ---------- */
+.accordion-hint {
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 9px 12px;
+  background: var(--green-pale);
+  color: var(--green-dark);
+  border: 1px solid #cdeed9;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0 0;
+}
+.accordion-hint:hover { background: #e0f7e8; }
+.accordion-hint.active { background: var(--green-pale); }
+
+.panel-hint {
+  max-height: 0;
+  overflow: hidden;
+  padding: 0;
+  border: none;
+  transition: max-height 0.25s ease, padding 0.25s ease;
+}
+.panel-hint.open {
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 10px 2px 2px;
+}
+.panel-hint .block { background: #fbfffc; border-color: #dcf3e3; }
+
+/* ---------- Invoer ---------- */
+.q-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.input-with-unit {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: white;
+}
+.quiz-input { padding: 7px 8px; text-align: left; border: none; font-size: 14px; font-family: inherit; }
+.quiz-input:focus { outline: 2px solid var(--blue); outline-offset: -2px; }
+
+.submit-btn {
+  padding: 8px 14px;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  background: var(--blue);
+  color: white;
+  font-weight: 600;
+  font-size: 13.5px;
+  transition: filter 0.15s;
+}
+.submit-btn:hover { filter: brightness(1.1); }
+
+.options-list { margin: 8px 0; display: flex; flex-direction: column; gap: 4px; }
+
+/* ---------- Foto-opties ---------- */
+.image-options { display: flex; gap: 12px; flex-wrap: wrap; margin: 10px 0; }
+.image-option {
+  border: 2px solid var(--line);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* ---------- "Hotspot"-vraagtype: hokjes tekenen op een figuur ---------- */
+.hotspot-frame { position: relative; margin-top: 8px; max-width: 560px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); cursor: crosshair; }
+.hotspot-frame img { display: block; width: 100%; user-select: none; -webkit-user-drag: none; }
+.hotspot-zone {
+  position: absolute;
+  min-width: 30px; min-height: 22px;
+  border: 2px dashed var(--blue);
+  background: rgba(47, 111, 237, 0.1);
+  border-radius: 6px;
+  font-size: 11px;
+  color: var(--blue-dark);
+  display: flex; align-items: center; justify-content: center;
+  padding: 2px; overflow: hidden;
+  cursor: grab;
+}
+.hotspot-zone-ghost { border-style: solid; background: rgba(47, 111, 237, 0.18); pointer-events: none; }
+.hotspot-zone-remove {
+  position: absolute; top: -8px; right: -8px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #c23b3b; color: white; border: none; font-size: 10px;
+  cursor: pointer; line-height: 1; padding: 0;
+}
+
+/* ---------- "Sort"-vraagtype (bouwer gebruikt eenvoudige lijstjes, geen extra CSS nodig) ---------- */
+
+/* ===========================================================
+   BOUWER-SPECIFIEKE AANVULLINGEN (niet in de echte quiz-stijl)
+=========================================================== */
+#builderToolbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--blue-dark); color: white;
+  padding: 14px 24px; box-shadow: 0 2px 10px rgba(0,0,0,.15);
+  display: flex; flex-direction: column; gap: 10px;
+  resize: vertical;
+  overflow: auto;
+  min-height: 128px;
+}
+#builderToolbar .toolbar-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-end; }
+#builderToolbar label { font-size: 12px; display: flex; flex-direction: column; gap: 4px; color: #dbe6ff; font-weight: 600; }
+#builderToolbar input[type=text] { padding: 7px 9px; border: none; border-radius: 6px; font-size: 13px; min-width: 180px; font-family: inherit; }
+#builderToolbar textarea { padding: 7px 9px; border: none; border-radius: 6px; font-size: 13px; width: 100%; min-height: 44px; font-family: inherit; resize: none; height: 100%; }
+#successMessagesInput { min-height: 92px; flex: 1; }
+#builderToolbar input[type=file] { font-size: 12px; max-width: 220px; }
+#builderToolbar .toolbar-btn { background: white; color: var(--blue-dark); border: none; border-radius: 7px; padding: 9px 14px; font-weight: 700; font-size: 13px; cursor: pointer; }
+#builderToolbar .toolbar-btn:hover { background: #eaf1ff; }
+#builderToolbar .toolbar-title { font-size: 16px; font-weight: 700; margin: 0; }
+#builderToolbar .toolbar-sub { font-size: 12.5px; color: #c7d7fb; margin: -6px 0 4px; }
+
+#page-body-wrap { padding: 24px; }
+
+/* ---------- Kleurenpalet-preview (op body, dus ook de bouwer-balk zelf volgt de keuze) ---------- */
+body.palette-blue {
+  --blue: #2f6fed;
+  --blue-dark: #1c3f8f;
+  --blue-pale: #eaf1ff;
+}
+body.palette-yellow {
+  --blue: #d98c00;
+  --blue-dark: #8a5a00;
+  --blue-pale: #fff4df;
+}
+body.palette-green {
+  --blue: #2f9e58;
+  --blue-dark: #1f7a41;
+  --blue-pale: #eefbf2;
+}
+body.palette-pink {
+  --blue: #d94f8c;
+  --blue-dark: #9c2f66;
+  --blue-pale: #ffe9f3;
+}
+
+/* ---------- Volledige-breedte-preview ---------- */
+#layout.layout-full-width { max-width: none; }
+#layout.layout-full-width #left-col { display: none; }
+
+.opgave-edit {
+  width: 100%; border: none; background: transparent; resize: vertical;
+  font-family: inherit; font-size: 14px; color: var(--ink); padding: 0; min-height: 90px;
+}
+.opgave-edit:focus { outline: none; }
+
+.opgaveimage-fields { display: flex; flex-direction: column; gap: 8px; }
+.opgaveimage-fields input[type=text] { width: 100%; }
+.tiny-check { font-size: 12.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+
+.builder-block .block-controls-row { display: flex; gap: 10px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
+.builder-block select.type-select { padding: 7px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; background: #f8f9fc; font-family: inherit; }
+.builder-block input.label-input { flex: 1; min-width: 160px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; font-size: 13px; font-family: inherit; }
+.remove-btn { background: #fdeeee; color: #c23b3b; border: none; border-radius: 6px; padding: 6px 10px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+.remove-btn:hover { background: #fbdcdc; }
+
+.block-text-edit { border: 1px solid var(--line) !important; border-radius: 8px; padding: 9px 11px !important; background: #fcfdff; width: 100%; }
+
+.media-fields-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+.media-fields-row input[type=text] { flex: 1; min-width: 140px; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px; font-size: 12.5px; font-family: inherit; }
+
+.tiny-label { font-size: 11.5px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin: 12px 0 5px; }
+
+.prefix-addon-input, .unit-addon-input {
+  border: none; background: transparent; font-weight: 600; font-size: 13px; color: var(--muted);
+  padding: 7px 8px; width: 90px; font-family: inherit;
+}
+.prefix-addon-input { border-right: 1px solid var(--line); }
+.unit-addon-input { border-left: 1px solid var(--line); }
+.input-with-unit .quiz-input.answer-input { width: 120px; }
+
+.wa-row, .option-edit-row, .combo-item, .cell-fields {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px;
+}
+.wa-row input[type=text], .option-edit-row input[type=text].quiz-input {
+  width: auto; flex: 1; min-width: 130px;
+}
+
+.add-inline-btn, .add-block-btn, .add-question-btn, .add-hint-btn {
+  background: var(--blue-pale); color: var(--blue-dark); border: 1px dashed var(--blue);
+  border-radius: 8px; padding: 9px 16px; font-size: 13px; font-weight: 700; cursor: pointer; margin-top: 6px;
+}
+.add-inline-btn:hover, .add-block-btn:hover, .add-question-btn:hover, .add-hint-btn:hover { background: #dbe9ff; }
+.add-question-btn, .add-block-btn { width: 100%; text-align: center; margin-bottom: 12px; }
+
+.image-option.builder-photo-cell { display: flex; flex-direction: column; gap: 6px; width: 220px; }
+.image-option.builder-photo-cell img { width: 100%; height: 130px; object-fit: contain; border-radius: 6px; background: #f4f5f8; }
+.image-option.builder-photo-cell input[type=text] { width: 100%; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; font-size: 12.5px; font-family: inherit; }
+
+.checkbox-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0; }
+.checkbox-row label { font-size: 12.5px; display: flex; align-items: center; gap: 5px; background: #fff; border: 1px solid var(--line); padding: 4px 8px; border-radius: 6px; }
+
+/* ---------- Bestandsacties (import / download) ---------- */
+.file-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.file-actions .toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 190px;
+  justify-content: center;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- Toggle-switch (bv. afrondings-animatie) ---------- */
+.toggle-row { display: flex; align-items: center; gap: 10px; }
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #5876b8;
+  border-radius: 999px;
+  transition: background 0.2s;
+}
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  width: 16px; height: 16px;
+  left: 3px; top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.toggle-switch input:checked + .toggle-slider { background: var(--green); }
+.toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+.toggle-label { font-size: 12.5px; font-weight: 600; color: #dbe6ff; }
+.toggle-label .toggle-sub { display: block; font-weight: 400; color: #a9bdec; font-size: 11px; margin-top: 1px; }
+
+/* ---------- Kleurenpalet-kiezer ---------- */
+.palette-row { display: flex; align-items: center; gap: 10px; }
+.palette-swatches { display: flex; gap: 8px; }
+.palette-swatch { position: relative; width: 26px; height: 26px; }
+.palette-swatch input {
+  position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer;
+}
+.swatch-dot {
+  display: block; width: 26px; height: 26px; border-radius: 50%;
+  box-shadow: inset 0 0 0 2px rgba(255,255,255,.7);
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.1s;
+}
+.palette-swatch input:checked + .swatch-dot { border-color: white; transform: scale(1.08); }
+.palette-swatch input:focus-visible + .swatch-dot { outline: 2px solid white; outline-offset: 2px; }
+
+/* ---------- Builder-preview van de credits-box onderaan ---------- */
+.credits-box-preview {
+  margin-top: 12px;
+  padding: 4px 10px;
+  text-align: center;
+  font-size: 9.5px;
+  letter-spacing: 0.02em;
+  color: #b7bcc8;
+  border-top: 1px dashed var(--line);
+}
+
+@media (max-width: 1000px) {
+  #layout { flex-direction: column; }
+  #left-col { position: static; width: 100%; }
+  #opgave, #opgaveImageWrap { max-width: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="builderToolbar">
+  <div class="toolbar-row">
+    <div>
+      <div class="toolbar-title">🛠 Oefeningen-bouwer</div>
+      <div class="toolbar-sub">Stel je oefening samen zoals ze er straks écht uitziet.</div>
+    </div>
+    <label>Bestandsnaam
+      <input type="text" id="filenameInput" value="oefening.html">
+    </label>
+    <div class="file-actions">
+      <label class="toolbar-btn" for="importFile">📂 Importeer HTML</label>
+      <input type="file" id="importFile" accept=".html" class="visually-hidden">
+      <button class="toolbar-btn" id="exportBtn">⬇ Download HTML</button>
+    </div>
+  </div>
+  <div class="toolbar-row" style="align-items: stretch;">
+    <div class="toggle-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="celebrationToggle">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label">Afrondings-animatie
+        <span class="toggle-sub">Lichter scherm + confetti als alle vragen opgelost zijn</span>
+      </span>
+    </div>
+    <div class="toggle-row">
+      <label class="toggle-switch">
+        <input type="checkbox" id="layoutToggle">
+        <span class="toggle-slider"></span>
+      </label>
+      <span class="toggle-label">Volledige breedte
+        <span class="toggle-sub">Verberg de linkerbalk (opgave + figuur), vragen over heel de breedte</span>
+      </span>
+    </div>
+    <div class="palette-row">
+      <span class="toggle-label">Kleurenpalet</span>
+      <div class="palette-swatches">
+        <label class="palette-swatch">
+          <input type="radio" name="colorPalette" value="blue" checked>
+          <span class="swatch-dot" style="background:#2f6fed;"></span>
+        </label>
+        <label class="palette-swatch">
+          <input type="radio" name="colorPalette" value="yellow">
+          <span class="swatch-dot" style="background:#d98c00;"></span>
+        </label>
+        <label class="palette-swatch">
+          <input type="radio" name="colorPalette" value="green">
+          <span class="swatch-dot" style="background:#2f9e58;"></span>
+        </label>
+        <label class="palette-swatch">
+          <input type="radio" name="colorPalette" value="pink">
+          <span class="swatch-dot" style="background:#d94f8c;"></span>
+        </label>
+      </div>
+    </div>
+    <label style="flex:1; min-width:220px; max-width:420px; margin-left:auto;">Boodschappen bij correct antwoord
+      <textarea id="successMessagesInput" rows="5"></textarea>
+    </label>
+  </div>
+</div>
+
+<div id="page-body-wrap">
+  <div id="layout">
+
+    <div id="left-col">
+      <div id="opgave">
+        <b>Opgave:</b><br>
+        <textarea id="opgaveTextArea" class="opgave-edit" placeholder="Tekst van het vraagstuk..."></textarea>
+      </div>
+
+      <div id="opgaveImageWrap">
+        <div class="figure-nav"><span class="tiny-label" style="margin:0;">Standaard-figuur (optioneel)</span></div>
+        <div class="opgaveimage-fields">
+          <input type="text" id="problemImageInput" placeholder="bestandsnaam.jpg" class="quiz-input" style="width:100%;">
+          <label class="tiny-check"><input type="checkbox" id="problemImageAlways"> altijd tonen (ook zonder foto-vraag opgelost)</label>
+        </div>
+      </div>
+    </div>
+
+    <div id="quiz"></div>
+
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ===========================================================
+   STATE
+=========================================================== */
+const state = {
+  successMessages: ["Goed bezig!", "Blijf zo doorgaan!", "Helemaal juist!"],
+  problemText: "",
+  problemImageSrc: "",
+  problemImageAlways: false,
+  celebrationEnabled: false,
+  colorPalette: "blue",
+  layoutFullWidth: false,
+  orientation: [],
+  questions: []
+};
+
+let builderUid = 0;
+function nextBuilderId(prefix) {
+  return `${prefix}-${builderUid++}`;
+}
+
+function newBlock(type) {
+  return {
+    type: type || "info",
+    label: "",
+    text: "",
+    video: "",
+    imageSrc: "",
+    imageAlt: "",
+    imageCaption: "",
+    answer: "",
+    prefix: "",
+    unit: "",
+    wrongAnswers: [],   // {value, message}
+    options: [],        // string[]  (juiste opties)
+    wrongOptions: [],   // {value, message}  (foute opties)
+    combos: [],         // {selected: string[], message}
+    photos: [],         // {src, correct, feedback, displayAs}
+    feedback: "",       // foutboodschap — voor type "hotspot"/"sort"
+    zones: [],          // {id,x,y,w,h,label} genormaliseerd (0-1) — voor type "hotspot"
+    distractors: [],    // string[] — extra foute opties — voor type "hotspot"
+    categories: [],      // {id, title} — voor type "sort"
+    items: [],           // {text, categoryId} — voor type "sort"
+    hints: []           // block[]
+  };
+}
+
+/* ===========================================================
+   KLEINE UI-HULPFUNCTIES
+=========================================================== */
+function el(tag, props, children) {
+  const node = document.createElement(tag);
+  if (props) {
+    Object.entries(props).forEach(([k, v]) => {
+      if (k === "class") node.className = v;
+      else if (k === "text") node.textContent = v;
+      else node.setAttribute(k, v);
+    });
+  }
+  (children || []).forEach((c) => node.appendChild(c));
+  return node;
+}
+
+function textInput(value, onChange, placeholder) {
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = value || "";
+  if (placeholder) input.placeholder = placeholder;
+  input.addEventListener("input", () => onChange(input.value));
+  return input;
+}
+
+function textareaInput(value, onChange, placeholder) {
+  const t = document.createElement("textarea");
+  t.value = value || "";
+  if (placeholder) t.placeholder = placeholder;
+  t.addEventListener("input", () => onChange(t.value));
+  return t;
+}
+
+function typeLabel(t) {
+  return {
+    info: "Info (geen interactie)",
+    input: "Invulvraag",
+    multi: "Meerkeuze",
+    photo: "Foto-keuze",
+    hotspot: "Sleep naar hokje op figuur",
+    sort: "Sleep naar categorie",
+  }[t] || t;
+}
+
+function makeToggle(btn, arrow, panel, startOpen) {
+  if (startOpen) { btn.classList.add("active"); panel.classList.add("open"); arrow.textContent = "▲"; }
+  else { arrow.textContent = "►"; }
+  btn.addEventListener("click", () => {
+    const nowActive = btn.classList.toggle("active");
+    panel.classList.toggle("open");
+    arrow.textContent = nowActive ? "▲" : "►";
+  });
+}
+
+/* ===========================================================
+   BLOCK-EDITOR (recursief — een hint is gewoon weer een block),
+   opgebouwd met dezelfde classes als de echte, gerenderde quiz.
+=========================================================== */
+
+function renderBlockEditor(block, container, opts) {
+  opts = opts || {};
+  container.innerHTML = "";
+  const card = el("div", { class: "block builder-block" });
+  const rerender = () => renderBlockEditor(block, container, opts);
+
+  const controls = el("div", { class: "block-controls-row" });
+  const typeSelect = document.createElement("select");
+  typeSelect.className = "type-select";
+  ["info", "input", "multi", "photo", "hotspot", "sort"].forEach((t) => {
+    const o = document.createElement("option");
+    o.value = t; o.textContent = typeLabel(t);
+    if (block.type === t) o.selected = true;
+    typeSelect.appendChild(o);
+  });
+  typeSelect.addEventListener("change", () => { block.type = typeSelect.value; rerender(); });
+  controls.appendChild(typeSelect);
+
+  if (opts.showLabel) {
+    const labelInput = textInput(block.label, (v) => {
+      block.label = v;
+      if (opts.onLabelChange) opts.onLabelChange(v);
+    }, "Titel voor deze hint-knop (optioneel)");
+    labelInput.className = "label-input";
+    controls.appendChild(labelInput);
+  }
+
+  if (opts.onRemove) {
+    const removeBtn = el("button", { class: "remove-btn", text: "✕ Verwijderen" });
+    removeBtn.addEventListener("click", opts.onRemove);
+    controls.appendChild(removeBtn);
+  }
+  card.appendChild(controls);
+
+  const textArea = textareaInput(block.text, (v) => (block.text = v), "Tekst (mag $LaTeX$ en html bevatten)");
+  textArea.className = "block-text-edit";
+  card.appendChild(textArea);
+
+  const mediaRow = el("div", { class: "media-fields-row" });
+  mediaRow.appendChild(textInput(block.video, (v) => (block.video = v), "🎬 Video (bestandsnaam of embed-url)"));
+  mediaRow.appendChild(textInput(block.imageSrc, (v) => (block.imageSrc = v), "🖼 Afbeelding src"));
+  mediaRow.appendChild(textInput(block.imageAlt, (v) => (block.imageAlt = v), "Alt-tekst"));
+  mediaRow.appendChild(textInput(block.imageCaption, (v) => (block.imageCaption = v), "Bijschrift"));
+  card.appendChild(mediaRow);
+
+  if (block.type === "input") card.appendChild(renderInputFields(block, rerender));
+  if (block.type === "multi") card.appendChild(renderMultiFields(block, rerender));
+  if (block.type === "photo") card.appendChild(renderPhotoFields(block, rerender));
+  if (block.type === "hotspot") card.appendChild(renderHotspotFields(block, rerender));
+  if (block.type === "sort") card.appendChild(renderSortFields(block, rerender));
+
+  card.appendChild(renderHintsSection(block, rerender));
+
+  container.appendChild(card);
+}
+
+function renderInputFields(block, rerender) {
+  const wrap = document.createElement("div");
+
+  const row = el("div", { class: "q-row" });
+  const iwu = el("div", { class: "input-with-unit" });
+  const prefixInput = textInput(block.prefix, (v) => (block.prefix = v), "pretext bv. $d=$");
+  prefixInput.className = "prefix-addon-input";
+  iwu.appendChild(prefixInput);
+  const answerInput = textInput(block.answer, (v) => (block.answer = v), "juist antwoord");
+  answerInput.className = "quiz-input answer-input";
+  iwu.appendChild(answerInput);
+  const unitInput = textInput(block.unit, (v) => (block.unit = v), "eenheid");
+  unitInput.className = "unit-addon-input";
+  iwu.appendChild(unitInput);
+  row.appendChild(iwu);
+  wrap.appendChild(row);
+
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Specifieke foute antwoorden" }));
+  block.wrongAnswers.forEach((wa, i) => {
+    const r = el("div", { class: "wa-row" });
+    r.appendChild(textInput(wa.value, (v) => (wa.value = v), "fout antwoord"));
+    r.appendChild(textInput(wa.message, (v) => (wa.message = v), "specifieke boodschap"));
+    const rm = el("button", { class: "remove-btn", text: "✕" });
+    rm.addEventListener("click", () => { block.wrongAnswers.splice(i, 1); rerender(); });
+    r.appendChild(rm);
+    wrap.appendChild(r);
+  });
+  const addWa = el("button", { class: "add-inline-btn", text: "+ Foutief antwoord toevoegen" });
+  addWa.addEventListener("click", () => { block.wrongAnswers.push({ value: "", message: "" }); rerender(); });
+  wrap.appendChild(addWa);
+
+  return wrap;
+}
+
+function renderMultiFields(block, rerender) {
+  const wrap = document.createElement("div");
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Antwoordopties — vink aan wat juist is" }));
+
+  const list = el("div", { class: "options-list" });
+  const rows = [
+    ...block.options.map((text, i) => ({ text, correct: true, message: "", arr: "options", idx: i })),
+    ...block.wrongOptions.map((w, i) => ({ text: w.value, correct: false, message: w.message, arr: "wrongOptions", idx: i }))
+  ];
+
+  rows.forEach((row) => {
+    const r = el("div", { class: "option-edit-row" });
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = row.correct;
+    cb.addEventListener("change", () => {
+      if (row.arr === "options") block.options.splice(row.idx, 1);
+      else block.wrongOptions.splice(row.idx, 1);
+      if (cb.checked) block.options.push(row.text);
+      else block.wrongOptions.push({ value: row.text, message: "" });
+      rerender();
+    });
+    r.appendChild(cb);
+
+    const textEl = textInput(row.text, (v) => {
+      if (row.arr === "options") block.options[row.idx] = v;
+      else block.wrongOptions[row.idx].value = v;
+    }, "optietekst");
+    textEl.className = "quiz-input";
+    r.appendChild(textEl);
+
+    if (!row.correct) {
+      const msgEl = textInput(row.message, (v) => { block.wrongOptions[row.idx].message = v; }, "boodschap bij deze foute optie (optioneel)");
+      msgEl.className = "quiz-input";
+      r.appendChild(msgEl);
+    }
+
+    const rm = el("button", { class: "remove-btn", text: "✕" });
+    rm.addEventListener("click", () => {
+      if (row.arr === "options") block.options.splice(row.idx, 1);
+      else block.wrongOptions.splice(row.idx, 1);
+      rerender();
+    });
+    r.appendChild(rm);
+
+    list.appendChild(r);
+  });
+  wrap.appendChild(list);
+
+  const addOpt = el("button", { class: "add-inline-btn", text: "+ Optie toevoegen" });
+  addOpt.addEventListener("click", () => { block.wrongOptions.push({ value: "", message: "" }); rerender(); });
+  wrap.appendChild(addOpt);
+
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Specifieke feedback bij een bepaalde combinatie" }));
+  const allOptionTexts = [...block.options, ...block.wrongOptions.map((w) => w.value)].filter((s) => s && s.trim() !== "");
+
+  block.combos.forEach((combo, i) => {
+    const r = el("div", { class: "combo-item" });
+    r.appendChild(el("div", { class: "tiny-label", text: "Geselecteerd: " + combo.selected.join(", ") }));
+    const msgRow = el("div", { class: "wa-row" });
+    msgRow.appendChild(textInput(combo.message, (v) => (combo.message = v), "boodschap"));
+    const rm = el("button", { class: "remove-btn", text: "✕ Verwijder" });
+    rm.addEventListener("click", () => { block.combos.splice(i, 1); rerender(); });
+    msgRow.appendChild(rm);
+    r.appendChild(msgRow);
+    wrap.appendChild(r);
+  });
+
+  if (allOptionTexts.length) {
+    const builder = el("div", { class: "combo-item" });
+    builder.appendChild(el("div", { class: "tiny-label", text: "Nieuwe combinatie samenstellen:" }));
+    const checkRow = el("div", { class: "checkbox-row" });
+    const selectedNow = [];
+    allOptionTexts.forEach((optText) => {
+      const lbl = el("label", {});
+      const cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.addEventListener("change", () => {
+        const idx = selectedNow.indexOf(optText);
+        if (cb.checked && idx === -1) selectedNow.push(optText);
+        if (!cb.checked && idx !== -1) selectedNow.splice(idx, 1);
+      });
+      lbl.appendChild(cb);
+      lbl.appendChild(document.createTextNode(" " + optText));
+      checkRow.appendChild(lbl);
+    });
+    builder.appendChild(checkRow);
+    const msgInput = textInput("", () => {}, "boodschap bij deze combinatie");
+    const addComboBtn = el("button", { class: "add-inline-btn", text: "+ Combinatie toevoegen" });
+    addComboBtn.addEventListener("click", () => {
+      if (!selectedNow.length) return;
+      block.combos.push({ selected: selectedNow.slice(), message: msgInput.value });
+      rerender();
+    });
+    builder.appendChild(msgInput);
+    builder.appendChild(addComboBtn);
+    wrap.appendChild(builder);
+  }
+
+  return wrap;
+}
+
+function renderPhotoFields(block, rerender) {
+  const wrap = document.createElement("div");
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Foto-opties" }));
+  const grid = el("div", { class: "image-options" });
+
+  block.photos.forEach((photo, i) => {
+    const cell = el("div", { class: "image-option builder-photo-cell" });
+
+    const img = document.createElement("img");
+    img.src = photo.src || "";
+    img.style.display = photo.src ? "block" : "none";
+    img.onerror = () => { img.style.display = "none"; };
+    img.onload = () => { img.style.display = "block"; };
+
+    const srcInput = textInput(photo.src, (v) => {
+      photo.src = v;
+      img.src = v;
+      img.style.display = v ? "block" : "none";
+    }, "bestandsnaam.jpg");
+    cell.appendChild(srcInput);
+    cell.appendChild(img);
+
+    const correctLabel = el("label", { class: "tiny-check" });
+    const correctCb = document.createElement("input");
+    correctCb.type = "checkbox";
+    correctCb.checked = !!photo.correct;
+    correctCb.addEventListener("change", () => { photo.correct = correctCb.checked; rerender(); });
+    correctLabel.appendChild(correctCb);
+    correctLabel.appendChild(document.createTextNode(" juiste antwoord"));
+    cell.appendChild(correctLabel);
+
+    if (photo.correct) {
+      cell.appendChild(textInput(photo.displayAs, (v) => (photo.displayAs = v), "andere afbeelding tonen (optioneel)"));
+    } else {
+      cell.appendChild(textInput(photo.feedback, (v) => (photo.feedback = v), "foutboodschap"));
+    }
+
+    const rm = el("button", { class: "remove-btn", text: "✕ Verwijder foto" });
+    rm.addEventListener("click", () => { block.photos.splice(i, 1); rerender(); });
+    cell.appendChild(rm);
+
+    grid.appendChild(cell);
+  });
+  wrap.appendChild(grid);
+
+  const addPhoto = el("button", { class: "add-inline-btn", text: "+ Foto toevoegen" });
+  addPhoto.addEventListener("click", () => { block.photos.push({ src: "", correct: false, feedback: "", displayAs: "" }); rerender(); });
+  wrap.appendChild(addPhoto);
+
+  return wrap;
+}
+
+/* Snijdt de oneindige rechte door twee punten af op de rand van het
+   eenheidsvierkant [0,1]x[0,1] (Liang-Barsky) — zelfde logica als in
+   engine.js, hier herhaald omdat de bouwer engine.js niet inlaadt. */
+
+/* Auteurs-editor voor "hotspot": sleep een rechthoek op de figuur om een
+   nieuw hokje te tekenen; bestaande hokjes kan je verslepen of verwijderen. */
+function renderHotspotFields(block, rerender) {
+  const wrap = document.createElement("div");
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Hokjes op de figuur — sleep een rechthoek om een nieuw hokje te tekenen" }));
+
+  if (!block.imageSrc || !block.imageSrc.trim()) {
+    wrap.appendChild(el("div", { class: "tiny-label", text: "⚠ Geef hierboven eerst een afbeelding-src op (het veld \"🖼 Afbeelding src\")." }));
+    return wrap;
+  }
+
+  const frame = el("div", { class: "figure-frame hotspot-frame" });
+  const img = document.createElement("img");
+  img.src = block.imageSrc;
+  frame.appendChild(img);
+  wrap.appendChild(frame);
+
+  const listWrap = document.createElement("div");
+
+  function posFromEvent(e) {
+    const rect = img.getBoundingClientRect();
+    const x = Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width));
+    const y = Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height));
+    return { x, y };
+  }
+
+  function renderZones() {
+    frame.querySelectorAll(".hotspot-zone").forEach((z) => z.remove());
+    block.zones.forEach((zone, idx) => {
+      const z = document.createElement("div");
+      z.className = "hotspot-zone";
+      z.style.left = zone.x * 100 + "%";
+      z.style.top = zone.y * 100 + "%";
+      z.style.width = zone.w * 100 + "%";
+      z.style.height = zone.h * 100 + "%";
+      z.textContent = zone.label || ("Hokje " + (idx + 1));
+
+      const rm = document.createElement("button");
+      rm.type = "button";
+      rm.className = "hotspot-zone-remove";
+      rm.textContent = "✕";
+      rm.addEventListener("pointerdown", (e) => { e.stopPropagation(); });
+      rm.addEventListener("click", (e) => {
+        e.stopPropagation();
+        block.zones.splice(idx, 1);
+        renderZones();
+        renderList();
+      });
+      z.appendChild(rm);
+
+      let dragging = false, startPos = null, startZone = null;
+      z.addEventListener("pointerdown", (e) => {
+        if (e.target === rm) return;
+        e.stopPropagation();
+        dragging = true;
+        startPos = posFromEvent(e);
+        startZone = { x: zone.x, y: zone.y };
+        z.setPointerCapture(e.pointerId);
+      });
+      z.addEventListener("pointermove", (e) => {
+        if (!dragging) return;
+        const now = posFromEvent(e);
+        zone.x = Math.min(1 - zone.w, Math.max(0, startZone.x + (now.x - startPos.x)));
+        zone.y = Math.min(1 - zone.h, Math.max(0, startZone.y + (now.y - startPos.y)));
+        z.style.left = zone.x * 100 + "%";
+        z.style.top = zone.y * 100 + "%";
+      });
+      ["pointerup", "pointercancel"].forEach((ev) => z.addEventListener(ev, () => { dragging = false; }));
+
+      frame.appendChild(z);
+    });
+  }
+
+  let ghost = null;
+  let dragStart = null;
+  frame.addEventListener("pointerdown", (e) => {
+    if (e.target !== img && e.target !== frame) return;
+    dragStart = posFromEvent(e);
+    ghost = document.createElement("div");
+    ghost.className = "hotspot-zone hotspot-zone-ghost";
+    frame.appendChild(ghost);
+  });
+  frame.addEventListener("pointermove", (e) => {
+    if (!dragStart || !ghost) return;
+    const now = posFromEvent(e);
+    const x = Math.min(dragStart.x, now.x), y = Math.min(dragStart.y, now.y);
+    const w = Math.abs(now.x - dragStart.x), h = Math.abs(now.y - dragStart.y);
+    ghost.style.left = x * 100 + "%";
+    ghost.style.top = y * 100 + "%";
+    ghost.style.width = w * 100 + "%";
+    ghost.style.height = h * 100 + "%";
+  });
+  ["pointerup", "pointercancel"].forEach((ev) =>
+    frame.addEventListener(ev, (e) => {
+      if (!dragStart) return;
+      const now = posFromEvent(e);
+      const x = Math.min(dragStart.x, now.x), y = Math.min(dragStart.y, now.y);
+      const w = Math.abs(now.x - dragStart.x), h = Math.abs(now.y - dragStart.y);
+      if (ghost) { ghost.remove(); ghost = null; }
+      dragStart = null;
+      if (w > 0.03 && h > 0.03) {
+        block.zones.push({ id: nextBuilderId("zone"), x, y, w, h, label: "" });
+        renderZones();
+        renderList();
+      }
+    })
+  );
+
+  function renderList() {
+    listWrap.innerHTML = "";
+    block.zones.forEach((zone, idx) => {
+      const row = el("div", { class: "wa-row" });
+      row.appendChild(el("span", { class: "tiny-check", text: "Hokje " + (idx + 1) + ":" }));
+      const labelInput = textInput(zone.label, (v) => { zone.label = v; renderZones(); }, "correcte tekst voor dit hokje");
+      labelInput.className = "quiz-input";
+      row.appendChild(labelInput);
+      const rm = el("button", { class: "remove-btn", text: "✕" });
+      rm.addEventListener("click", () => { block.zones.splice(idx, 1); renderZones(); renderList(); });
+      row.appendChild(rm);
+      listWrap.appendChild(row);
+    });
+  }
+
+  wrap.appendChild(listWrap);
+
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Extra foute opties (afleiders) — één per lijn" }));
+  const distractorArea = textareaInput(
+    (block.distractors || []).join("\n"),
+    (v) => { block.distractors = v.split("\n").map((s) => s.trim()).filter((s) => s !== ""); },
+    "bv. een extra foute term die nergens hoort"
+  );
+  distractorArea.className = "block-text-edit";
+  wrap.appendChild(distractorArea);
+
+  wrap.appendChild(textInput(block.feedback, (v) => (block.feedback = v), "foutboodschap (optioneel)"));
+
+  renderZones();
+  renderList();
+  return wrap;
+}
+
+/* Auteurs-editor voor "sort": categorieën en items via eenvoudige lijstjes;
+   geen sleepinteractie nodig aan bouwer-kant, gewoon een dropdown per item. */
+function renderSortFields(block, rerender) {
+  const wrap = document.createElement("div");
+
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Categorieën" }));
+  const catList = document.createElement("div");
+  block.categories.forEach((cat, idx) => {
+    const row = el("div", { class: "wa-row" });
+    const titleInput = textInput(cat.title, (v) => (cat.title = v), "titel van de categorie");
+    titleInput.className = "quiz-input";
+    row.appendChild(titleInput);
+    const rm = el("button", { class: "remove-btn", text: "✕" });
+    rm.addEventListener("click", () => {
+      block.categories.splice(idx, 1);
+      block.items.forEach((it) => { if (it.categoryId === cat.id) it.categoryId = ""; });
+      rerender();
+    });
+    row.appendChild(rm);
+    catList.appendChild(row);
+  });
+  wrap.appendChild(catList);
+  const addCat = el("button", { class: "add-inline-btn", text: "+ Categorie toevoegen" });
+  addCat.addEventListener("click", () => {
+    block.categories.push({ id: nextBuilderId("cat"), title: "" });
+    rerender();
+  });
+  wrap.appendChild(addCat);
+
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Items — de student sleept deze in de juiste categorie" }));
+  const itemList = document.createElement("div");
+  block.items.forEach((item, idx) => {
+    const row = el("div", { class: "wa-row" });
+    const textField = textInput(item.text, (v) => (item.text = v), "tekst/woord/zin");
+    textField.className = "quiz-input";
+    row.appendChild(textField);
+
+    const catSelect = document.createElement("select");
+    catSelect.className = "type-select";
+    const emptyOpt = document.createElement("option");
+    emptyOpt.value = ""; emptyOpt.textContent = "— kies categorie —";
+    catSelect.appendChild(emptyOpt);
+    block.categories.forEach((cat) => {
+      const o = document.createElement("option");
+      o.value = cat.id; o.textContent = cat.title || "(naamloos)";
+      if (item.categoryId === cat.id) o.selected = true;
+      catSelect.appendChild(o);
+    });
+    catSelect.addEventListener("change", () => { item.categoryId = catSelect.value; });
+    row.appendChild(catSelect);
+
+    const rm = el("button", { class: "remove-btn", text: "✕" });
+    rm.addEventListener("click", () => { block.items.splice(idx, 1); rerender(); });
+    row.appendChild(rm);
+
+    itemList.appendChild(row);
+  });
+  wrap.appendChild(itemList);
+  const addItem = el("button", { class: "add-inline-btn", text: "+ Item toevoegen" });
+  addItem.addEventListener("click", () => {
+    block.items.push({ text: "", categoryId: block.categories[0] ? block.categories[0].id : "" });
+    rerender();
+  });
+  wrap.appendChild(addItem);
+
+  wrap.appendChild(textInput(block.feedback, (v) => (block.feedback = v), "foutboodschap (optioneel)"));
+
+  return wrap;
+}
+
+function renderHintsSection(block, rerenderParent) {
+  const wrap = document.createElement("div");
+  wrap.appendChild(el("div", { class: "tiny-label", text: "Hints" }));
+
+  block.hints.forEach((hint, i) => {
+    const hbtn = el("button", { class: "accordion-hint" });
+    const labelSpan = el("span", { class: "accordion-label", text: hint.label || ("Hint " + (i + 1)) });
+    const arrow = el("span", { class: "accordion-arrow", text: "►" });
+    hbtn.appendChild(labelSpan);
+    hbtn.appendChild(arrow);
+
+    const panel = el("div", { class: "panel-hint" });
+    const inner = document.createElement("div");
+    renderBlockEditor(hint, inner, {
+      showLabel: true,
+      onRemove: () => { block.hints.splice(i, 1); rerenderParent(); },
+      onLabelChange: (v) => { labelSpan.textContent = v || ("Hint " + (i + 1)); }
+    });
+    panel.appendChild(inner);
+
+    makeToggle(hbtn, arrow, panel, true);
+
+    wrap.appendChild(hbtn);
+    wrap.appendChild(panel);
+  });
+
+  const addHintBtn = el("button", { class: "add-hint-btn", text: "+ Hint toevoegen" });
+  addHintBtn.addEventListener("click", () => { block.hints.push(newBlock("info")); rerenderParent(); });
+  wrap.appendChild(addHintBtn);
+
+  return wrap;
+}
+
+/* ===========================================================
+   PAGINA-OPBOUW (oriëntatie-accordion + vragen-accordions)
+=========================================================== */
+
+function renderOrientationList() {
+  const container = document.getElementById("orientationList");
+  container.innerHTML = "";
+  state.orientation.forEach((block, i) => {
+    const wrapper = document.createElement("div");
+    renderBlockEditor(block, wrapper, {
+      showLabel: false,
+      onRemove: () => { state.orientation.splice(i, 1); renderOrientationList(); }
+    });
+    container.appendChild(wrapper);
+  });
+}
+
+function renderQuestionsSection() {
+  const container = document.getElementById("questionsSection");
+  container.innerHTML = "";
+
+  state.questions.forEach((block, qi) => {
+    const btn = el("button", { class: "accordion" });
+    const labelSpan = el("span", { class: "accordion-label", text: "Vraag " + (qi + 1) });
+    const arrow = el("span", { class: "accordion-arrow", text: "▲" });
+    btn.appendChild(labelSpan);
+    btn.appendChild(arrow);
+
+    const panel = el("div", { class: "panel" });
+    const wrapper = document.createElement("div");
+    renderBlockEditor(block, wrapper, {
+      showLabel: false,
+      onRemove: () => { state.questions.splice(qi, 1); renderQuestionsSection(); }
+    });
+    panel.appendChild(wrapper);
+
+    makeToggle(btn, arrow, panel, true);
+
+    container.appendChild(btn);
+    container.appendChild(panel);
+  });
+
+  const addBtn = el("button", { class: "add-question-btn", text: "+ Vraag toevoegen" });
+  addBtn.addEventListener("click", () => { state.questions.push(newBlock("input")); renderQuestionsSection(); });
+  container.appendChild(addBtn);
+}
+
+function buildQuizArea() {
+  const quizEl = document.getElementById("quiz");
+  quizEl.innerHTML = "";
+
+  const obtn = el("button", { class: "accordion" });
+  const olabel = el("span", { class: "accordion-label", text: "Oriëntatie (optioneel)" });
+  const oarrow = el("span", { class: "accordion-arrow", text: "▲" });
+  obtn.appendChild(olabel);
+  obtn.appendChild(oarrow);
+
+  const opanel = el("div", { class: "panel" });
+  const olist = el("div", { id: "orientationList" });
+  opanel.appendChild(olist);
+  const oadd = el("button", { class: "add-block-btn", text: "+ Blok toevoegen" });
+  oadd.addEventListener("click", () => { state.orientation.push(newBlock("info")); renderOrientationList(); });
+  opanel.appendChild(oadd);
+
+  makeToggle(obtn, oarrow, opanel, true);
+
+  quizEl.appendChild(obtn);
+  quizEl.appendChild(opanel);
+
+  const qSection = el("div", { id: "questionsSection" });
+  quizEl.appendChild(qSection);
+
+  renderOrientationList();
+  renderQuestionsSection();
+
+  const credits = el("div", {
+    class: "credits-box-preview",
+    text: "Developed by Bas Van Rossem, Tom Simon, Wout Van Laere (verschijnt onderaan de geëxporteerde oefening)"
+  });
+  quizEl.appendChild(credits);
+}
+
+/* ===========================================================
+   ALGEMENE INSTELLINGEN (toolbar + linkerkolom)
+=========================================================== */
+
+function syncStaticFieldsFromState() {
+  document.getElementById("successMessagesInput").value = state.successMessages.join("\n");
+  document.getElementById("opgaveTextArea").value = state.problemText;
+  document.getElementById("problemImageInput").value = state.problemImageSrc;
+  document.getElementById("problemImageAlways").checked = state.problemImageAlways;
+  document.getElementById("celebrationToggle").checked = state.celebrationEnabled;
+  document.getElementById("layoutToggle").checked = state.layoutFullWidth;
+  const paletteInput = document.querySelector('input[name="colorPalette"][value="' + state.colorPalette + '"]');
+  if (paletteInput) paletteInput.checked = true;
+  applyPreviewPalette();
+  applyPreviewLayout();
+}
+
+function applyPreviewPalette() {
+  document.body.classList.remove("palette-blue", "palette-yellow", "palette-green", "palette-pink");
+  document.body.classList.add("palette-" + (state.colorPalette || "blue"));
+}
+
+function applyPreviewLayout() {
+  document.getElementById("layout").classList.toggle("layout-full-width", !!state.layoutFullWidth);
+}
+
+document.getElementById("successMessagesInput").addEventListener("input", function () {
+  state.successMessages = this.value.split("\n");
+});
+document.getElementById("opgaveTextArea").addEventListener("input", function () {
+  state.problemText = this.value;
+});
+document.getElementById("problemImageInput").addEventListener("input", function () {
+  state.problemImageSrc = this.value;
+});
+document.getElementById("problemImageAlways").addEventListener("change", function () {
+  state.problemImageAlways = this.checked;
+});
+document.getElementById("celebrationToggle").addEventListener("change", function () {
+  state.celebrationEnabled = this.checked;
+});
+document.getElementById("layoutToggle").addEventListener("change", function () {
+  state.layoutFullWidth = this.checked;
+  applyPreviewLayout();
+});
+document.querySelectorAll('input[name="colorPalette"]').forEach((input) => {
+  input.addEventListener("change", function () {
+    if (this.checked) {
+      state.colorPalette = this.value;
+      applyPreviewPalette();
+    }
+  });
+});
+
+/* ===========================================================
+   STATE <-> JSON-SCHEMA
+=========================================================== */
+
+function toNumberIfPossible(v) {
+  if (v === undefined || v === null) return undefined;
+  const s = String(v).trim();
+  if (s === "") return undefined;
+  const n = Number(s);
+  return !isNaN(n) ? n : s;
+}
+
+function blockToJSON(block) {
+  const out = { type: block.type };
+  if (block.label && block.label.trim()) out.label = block.label.trim();
+  if (block.text && block.text.trim()) out.text = block.text;
+  if (block.video && block.video.trim()) out.video = block.video.trim();
+  if (block.imageSrc && block.imageSrc.trim()) {
+    out.image = { src: block.imageSrc.trim() };
+    if (block.imageAlt) out.image.alt = block.imageAlt;
+    if (block.imageCaption) out.image.caption = block.imageCaption;
+  }
+
+  if (block.type === "input") {
+    const ans = toNumberIfPossible(block.answer);
+    if (ans !== undefined) out.answer = ans;
+    if (block.prefix) out.prefix = block.prefix;
+    if (block.unit) out.unit = block.unit;
+    const wa = {};
+    block.wrongAnswers.forEach((w) => { if (w.value && w.value.trim() !== "") wa[w.value.trim()] = w.message || ""; });
+    if (Object.keys(wa).length) out.wrongAnswers = wa;
+  }
+
+  if (block.type === "multi") {
+    out.options = block.options.map((o) => o.trim()).filter((o) => o !== "");
+    const wo = {};
+    block.wrongOptions.forEach((w) => { if (w.value && w.value.trim() !== "") wo[w.value.trim()] = w.message || ""; });
+    if (Object.keys(wo).length) out.wrongOptions = wo;
+    const cf = {};
+    block.combos.forEach((c) => {
+      if (c.selected && c.selected.length) cf[c.selected.slice().sort().join("|")] = c.message || "";
+    });
+    if (Object.keys(cf).length) out.combinationFeedback = cf;
+  }
+
+  if (block.type === "photo") {
+    out.photos = block.photos
+      .filter((p) => p.src && p.src.trim() !== "")
+      .map((p) => {
+        const po = { src: p.src.trim(), correct: !!p.correct };
+        if (!p.correct && p.feedback) po.feedback = p.feedback;
+        if (p.correct && p.displayAs) po.displayAs = p.displayAs;
+        return po;
+      });
+  }
+
+  if (block.type === "hotspot") {
+    out.zones = block.zones.map((z) => ({ id: z.id, x: z.x, y: z.y, w: z.w, h: z.h, label: z.label || "" }));
+    const distractors = (block.distractors || []).filter((d) => d && d.trim() !== "");
+    if (distractors.length) out.distractors = distractors;
+    if (block.feedback && block.feedback.trim()) out.feedback = block.feedback.trim();
+  }
+
+  if (block.type === "sort") {
+    out.categories = block.categories.map((c) => ({ id: c.id, title: c.title || "" }));
+    out.items = block.items
+      .filter((i) => i.text && i.text.trim() !== "")
+      .map((i) => ({ text: i.text.trim(), categoryId: i.categoryId || "" }));
+    if (block.feedback && block.feedback.trim()) out.feedback = block.feedback.trim();
+  }
+
+  if (block.hints && block.hints.length) out.hints = block.hints.map(blockToJSON);
+  return out;
+}
+
+function jsonToBlock(o) {
+  const b = newBlock(o.type || "info");
+  b.label = o.label || "";
+  b.text = o.text || "";
+  b.video = o.video || "";
+  if (o.image) {
+    b.imageSrc = o.image.src || "";
+    b.imageAlt = o.image.alt || "";
+    b.imageCaption = o.image.caption || "";
+  }
+  if (o.type === "input") {
+    b.answer = (o.answer !== undefined && o.answer !== null) ? String(o.answer) : "";
+    b.prefix = o.prefix || "";
+    b.unit = o.unit || "";
+    b.wrongAnswers = o.wrongAnswers ? Object.entries(o.wrongAnswers).map(([value, message]) => ({ value, message })) : [];
+  }
+  if (o.type === "multi") {
+    b.options = o.options ? o.options.slice() : [];
+    b.wrongOptions = o.wrongOptions ? Object.entries(o.wrongOptions).map(([value, message]) => ({ value, message })) : [];
+    b.combos = o.combinationFeedback
+      ? Object.entries(o.combinationFeedback).map(([key, message]) => ({ selected: key.split("|"), message }))
+      : [];
+  }
+  if (o.type === "photo") {
+    b.photos = o.photos
+      ? o.photos.map((p) => ({ src: p.src || "", correct: !!p.correct, feedback: p.feedback || "", displayAs: p.displayAs || "" }))
+      : [];
+  }
+  if (o.type === "hotspot") {
+    b.zones = o.zones
+      ? o.zones.map((z) => ({ id: z.id || nextBuilderId("zone"), x: z.x, y: z.y, w: z.w, h: z.h, label: z.label || "" }))
+      : [];
+    b.distractors = o.distractors ? o.distractors.slice() : [];
+    b.feedback = o.feedback || "";
+  }
+  if (o.type === "sort") {
+    b.categories = o.categories
+      ? o.categories.map((c) => ({ id: c.id || nextBuilderId("cat"), title: c.title || "" }))
+      : [];
+    b.items = o.items ? o.items.map((i) => ({ text: i.text || "", categoryId: i.categoryId || "" })) : [];
+    b.feedback = o.feedback || "";
+  }
+  b.hints = (o.hints || []).map(jsonToBlock);
+  return b;
+}
+
+function buildQuizObject() {
+  const quiz = {
+    successMessages: state.successMessages.map((s) => s.trim()).filter((s) => s !== ""),
+    celebrationEnabled: !!state.celebrationEnabled,
+    colorPalette: state.colorPalette || "blue",
+    layoutFullWidth: !!state.layoutFullWidth,
+    orientation: state.orientation.map(blockToJSON),
+    questions: state.questions.map(blockToJSON)
+  };
+  if (state.problemImageSrc && state.problemImageSrc.trim()) {
+    quiz.problemImage = { src: state.problemImageSrc.trim(), alwaysShow: !!state.problemImageAlways };
+  }
+  return quiz;
+}
+
+/* ===========================================================
+   HTML-EXPORT
+   (let op: overal hieronder wordt de sluitende script-tag bewust
+   met een backslash geschreven ("<\/script>") in plaats van de
+   normale variant — anders zou de browser dít <script>-blok van
+   de bouwer zelf voortijdig afsluiten bij het parsen van deze pagina.)
+=========================================================== */
+
+function generateFullHTML() {
+  const quiz = buildQuizObject();
+  const quizJSON = JSON.stringify(quiz, null, 2);
+  const opgaveHTML = state.problemText || "";
+  const palette = state.colorPalette || "blue";
+  const layoutClass = state.layoutFullWidth ? ' class="layout-full-width"' : "";
+
+  return [
+    "<!DOCTYPE html>",
+    '<html lang="nl">',
+    "<head>",
+    '  <meta charset="utf-8">',
+    "  <title>Oefening</title>",
+    '  <link rel="stylesheet" href="style.css">',
+    "",
+    "  <script>",
+    "    window.MathJax = {",
+    "      tex: { inlineMath: [['$', '$'], ['\\\\(', '\\\\)']] },",
+    "      chtml: { scale: 1 }",
+    "    };",
+    "  <\/script>",
+    '  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"><\/script>',
+    "</head>",
+    '<body class="palette-' + palette + '">',
+    "",
+    '<div id="layout"' + layoutClass + '>',
+    '  <div id="left-col">',
+    '    <div id="opgave">',
+    "      <b>Opgave:</b><br>",
+    "      " + opgaveHTML,
+    "    </div>",
+    '    <div id="opgaveImageWrap">',
+    '      <div class="figure-nav">',
+    '        <button id="figurePrev">\u2b60</button>',
+    '        <span id="figureCounter">Figuur 1 van 1</span>',
+    '        <button id="figureNext">\u2b62</button>',
+    "      </div>",
+    '      <div class="figure-frame">',
+    '        <img id="opgaveImage" src="" alt="Figuur">',
+    '        <button type="button" id="opgaveImageZoom" class="figure-zoom-btn" aria-label="Vergroot figuur" title="Vergroot figuur">+</button>',
+    "      </div>",
+    "    </div>",
+    "  </div>",
+    '  <div id="quiz"></div>',
+    "</div>",
+    "",
+    '<script id="quiz-data" type="application/json">',
+    quizJSON,
+    "<\/script>",
+    "",
+    '<script src="engine.js" defer><\/script>',
+    "</body>",
+    "</html>"
+  ].join("\n");
+}
+
+function downloadBlob(content, filename, mime) {
+  const blob = new Blob([content], { type: mime || "text/html" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const filename = document.getElementById("filenameInput").value.trim() || "oefening.html";
+  downloadBlob(generateFullHTML(), filename, "text/html");
+});
+
+/* ===========================================================
+   IMPORTEREN VAN EEN BESTAANDE OEFENING
+=========================================================== */
+
+document.getElementById("importFile").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const html = reader.result;
+
+      const dataMatch = html.match(/<script id="quiz-data"[^>]*>([\s\S]*?)<\/script>/);
+      if (!dataMatch) { alert("Geen #quiz-data gevonden in dit bestand."); return; }
+      const quiz = JSON.parse(dataMatch[1]);
+
+      const opgaveMatch = html.match(/<div id="opgave">([\s\S]*?)<\/div>/);
+      let problemText = "";
+      if (opgaveMatch) {
+        problemText = opgaveMatch[1].replace(/<b>Opgave:<\/b>\s*<br>/i, "").trim();
+      }
+
+      state.successMessages = quiz.successMessages && quiz.successMessages.length ? quiz.successMessages.slice() : state.successMessages;
+      state.celebrationEnabled = !!quiz.celebrationEnabled;
+      state.colorPalette = quiz.colorPalette || "blue";
+      state.layoutFullWidth = !!quiz.layoutFullWidth;
+      state.problemText = problemText;
+      state.problemImageSrc = (quiz.problemImage && quiz.problemImage.src) || "";
+      state.problemImageAlways = !!(quiz.problemImage && quiz.problemImage.alwaysShow);
+      state.orientation = (quiz.orientation || []).map(jsonToBlock);
+      state.questions = (quiz.questions || []).map(jsonToBlock);
+
+      syncStaticFieldsFromState();
+      buildQuizArea();
+      alert("Oefening geïmporteerd. Je kan verder bewerken.");
+    } catch (err) {
+      console.error(err);
+      alert("Kon dit bestand niet inlezen: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+});
+
+/* ===========================================================
+   OPSTARTEN
+=========================================================== */
+
+syncStaticFieldsFromState();
+buildQuizArea();
+</script>
+</body>
+</html>
