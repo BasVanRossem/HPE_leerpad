@@ -7,6 +7,7 @@ Met deze tool maak je zelf interactieve oefeningen. Je hebt er geen server of in
 - 📦 [engine_and_builder.zip](engine_and_builder.zip): de bouwer, de motor en de opmaak samen, alles wat je nodig hebt om zelf oefeningen te maken.
 - 📦 [voorbeeld_oef.zip](voorbeeld_oef.zip): een volledig uitgewerkte oefening, zodat je kan zien hoe een eindresultaat eruitziet.
 
+Note: pak deze zipbestanden uit en open oefening.html om de voorbeeld oefening te zien (als je de antwoorden wil om hier eens door te gaan kan je deze importeren in de builder waar alles zichtbaar is). Om direct te beginnen bouwen kan je simpelweg de andere zip gebruiken en de builder openen. (Je opent deze bestanden simpelweg in google, firefox, ... door ze te dubbelklikken)
 ## Beschikbare bestanden
 
 - **`builder.html`** is de bouwer zelf. Hier stel je een oefening samen: de opgave, de vragen, de hints en een aantal instellingen. Alles gebeurt in je browser, er wordt niets ergens naartoe verstuurd. Op het einde exporteer je één `.html`-bestand.
