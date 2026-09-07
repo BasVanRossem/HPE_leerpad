@@ -1,13 +1,13 @@
 # Oefeningen maken — snelstartgids
 
-## De 4 bestanden
+## De 3 bestanden
 
 | Bestand | Wat is het |
 |---|---|
 | `builder.html` | De bouwer — hierin stel je een oefening samen. Open gewoon in je browser, geen server nodig. |
-| `engine.js` | De motor die een oefening laat werken. Nooit zelf aanpassen. |
-| `style.css` | De opmaak (kleuren, lay-out). Nooit zelf aanpassen. |
-| `oefening.html` | Een voorbeeld van een geëxporteerde oefening — ter inspiratie. |
+| `engine.js` | De motor die een oefening laat werken. Enkel zelf aanpassen als je extra functionaliteit (zoals een nieuw vraagtype) wil toevoegen. |
+| `style.css` | De opmaak (kleuren, lay-out). Enkel zelf aanpassen als je extra stijl (zoals een nieuw kleurenpalet) wil toevoegen. | |
+
 
 ## Een oefening maken
 
